@@ -15,8 +15,9 @@ step by step code for multi user authentication in laravel
 
 1. Open app/User.php file and add following code to our model:
 
-  //code
-  public function isAdmin() {
+    //code
+  
+    public function isAdmin() {
        return $this->role === 'admin';
     }
 
@@ -88,30 +89,30 @@ step by step code for multi user authentication in laravel
 
   namespace App\Http;
 
-  use Illuminate\Foundation\Http\Kernel as HttpKernel;
+    use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-  class Kernel extends HttpKernel
-  {
-      // some other functions
+    class Kernel extends HttpKernel
+    {
+        // some other functions
 
-      protected $routeMiddleware = [
-          // some other middlewares
-          'admin' => \App\Http\Middleware\AdminAuthenticated::class,
-          'user'  => \App\Http\Middleware\UserAuthenticated::class
-      ];
-  }
+        protected $routeMiddleware = [
+            // some other middlewares
+            'admin' => \App\Http\Middleware\AdminAuthenticated::class,
+            'user'  => \App\Http\Middleware\UserAuthenticated::class
+        ];
+    }
 
 6. Adding middleware to routes
 
-  // user protected routes
-  Route::group(['middleware' => ['auth', 'user'], 'prefix' => 'user'], function () {
-      Route::get('/', 'HomeController@index')->name('user_dashboard');
-  });
+  
+    Route::group(['middleware' => ['auth', 'user'], 'prefix' => 'user'], function () {
+        Route::get('/', 'HomeController@index')->name('user_dashboard');
+    });
 
-  // admin protected routes
-  Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function () {
-      Route::get('/', 'HomeController@index')->name('admin_dashboard');
-  });
+    // admin protected routes
+    Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function () {
+        Route::get('/', 'HomeController@index')->name('admin_dashboard');
+    });
 
 7. last change we have to make is in LoginController.
 
