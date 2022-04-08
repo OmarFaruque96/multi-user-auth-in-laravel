@@ -5,7 +5,7 @@ step by step code for multi user authentication in laravel
 #using Breeze (please take a backup for route)
 
 - composer require laravel/breeze --dev
-- php artisan 
+- php artisan breeze:install
 
 #setup all pages now (login,reg,forgetpass,dashboard etc)
 #multi-user-auth
