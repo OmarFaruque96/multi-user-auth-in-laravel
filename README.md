@@ -14,6 +14,8 @@ step by step code for multi user authentication in laravel
 - migrate
 
 1. Open app/User.php file and add following code to our model:
+
+  //code
   public function isAdmin() {
        return $this->role === 'admin';
     }
@@ -58,29 +60,29 @@ step by step code for multi user authentication in laravel
 
   namespace App\Http\Middleware;
 
-use Auth;
-use Closure;
+    use Auth;
+    use Closure;
 
-class UserAuthenticated
-{
-    public function handle($request, Closure $next)
+    class UserAuthenticated
     {
-        if( Auth::check() )
+        public function handle($request, Closure $next)
         {
-            // if user admin take him to his dashboard
-            if ( Auth::user()->isAdmin() ) {
-                 return redirect(route('admin_dashboard'));
+            if( Auth::check() )
+            {
+                // if user admin take him to his dashboard
+                if ( Auth::user()->isAdmin() ) {
+                     return redirect(route('admin_dashboard'));
+                }
+
+                // allow user to proceed with request
+                else if ( Auth::user()->isUser() ) {
+                     return $next($request);
+                }
             }
 
-            // allow user to proceed with request
-            else if ( Auth::user()->isUser() ) {
-                 return $next($request);
-            }
+            abort(404);  // for other user throw 404 error
         }
-
-        abort(404);  // for other user throw 404 error
     }
-}
 
 5. Open app/Http/Kernel.php file and add following two lines:
 
@@ -115,41 +117,31 @@ class UserAuthenticated
 
   namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+    use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
+    use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-class LoginController extends Controller
-{
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
-
-    // some other functions go here
-
-    protected function authenticated(Request $request, $user)
+    class LoginController extends Controller
     {
-        // to admin dashboard
-        if($user->isAdmin()) {
-            return redirect(route('admin_dashboard'));
-        }
 
-        // to user dashboard
-        else if($user->isUser()) {
-            return redirect(route('user_dashboard'));
-        }
+        use AuthenticatesUsers;
 
-        abort(404);
+        // some other functions go here
+
+        protected function authenticated(Request $request, $user)
+        {
+            // to admin dashboard
+            if($user->isAdmin()) {
+                return redirect(route('admin_dashboard'));
+            }
+
+            // to user dashboard
+            else if($user->isUser()) {
+                return redirect(route('user_dashboard'));
+            }
+
+            abort(404);
+        }
     }
-}
 
 #thats-it
